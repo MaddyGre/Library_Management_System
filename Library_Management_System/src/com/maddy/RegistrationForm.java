@@ -21,8 +21,13 @@ import com.sun.webkit.ContextMenu.ShowContext;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.DriverManager;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import javax.swing.JPasswordField;
 
 public class RegistrationForm {
 
@@ -30,9 +35,44 @@ public class RegistrationForm {
 	private JTextField nameTxt;
 	private JTextField surnameTxt;
 	private JTextField usernameTxt;
-	private JTextField passwordTxt;
 	private JTextField emailTxt;
 	private JTextField phoneTxt;
+	private JPasswordField password;
+	private JPasswordField confirmPassword;
+	
+	
+
+	public JTextField getUsernameTxt() {
+		return usernameTxt;
+	}
+
+	public void setUsernameTxt(JTextField usernameTxt) {
+		this.usernameTxt = usernameTxt;
+	}
+
+	public JTextField getEmailTxt() {
+		return emailTxt;
+	}
+
+	public void setEmailTxt(JTextField emailTxt) {
+		this.emailTxt = emailTxt;
+	}
+
+	public JPasswordField getPassword() {
+		return password;
+	}
+
+	public void setPassword(JPasswordField password) {
+		this.password = password;
+	}
+
+	public JPasswordField getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(JPasswordField confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 
 	/**
 	 * Launch the application.
@@ -64,12 +104,12 @@ public class RegistrationForm {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(64, 224, 208));
 		frame.getContentPane().setForeground(new Color(0, 206, 209));
-		frame.setBounds(500, 500, 500, 500);
+		frame.setBounds(500, 500, 650, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblRegistrationForm = new JLabel("REGISTRATION FORM");
-		lblRegistrationForm.setBounds(103, 13, 272, 40);
+		lblRegistrationForm.setBounds(206, 13, 272, 40);
 		lblRegistrationForm.setForeground(new Color(255, 255, 255));
 		lblRegistrationForm.setFont(new Font("Georgia", Font.BOLD, 22));
 		frame.getContentPane().add(lblRegistrationForm);
@@ -91,7 +131,7 @@ public class RegistrationForm {
 		
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setFont(new Font("Georgia", Font.BOLD, 16));
-		lblEmail.setBounds(12, 289, 55, 16);
+		lblEmail.setBounds(12, 339, 55, 16);
 		frame.getContentPane().add(lblEmail);
 		
 		JLabel lblNewLabel_1 = new JLabel("User name");
@@ -101,7 +141,7 @@ public class RegistrationForm {
 		
 		JLabel lblNewLabel_2 = new JLabel("Phone number");
 		lblNewLabel_2.setFont(new Font("Georgia", Font.BOLD, 16));
-		lblNewLabel_2.setBounds(12, 346, 126, 16);
+		lblNewLabel_2.setBounds(12, 388, 126, 16);
 		frame.getContentPane().add(lblNewLabel_2);
 		
 		nameTxt = new JTextField();		
@@ -149,42 +189,24 @@ public class RegistrationForm {
 		usernameTxt = new JTextField();
 		usernameTxt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent evt) {
-				String username = usernameTxt.getText();
-				int length = username.length();
-				char c = evt.getKeyChar();
-				
-				
-				if(evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9'){
-					if(length < 10){
+					char c = evt.getKeyChar();
+
+					if(Character.isLetter(c) || Character.isWhitespace(c) || Character.isISOControl(c)){
+						//iso control used to perform edit operation (delete and backspace)
 						usernameTxt.setEditable(true);
-					} else {
-						// you cannot change it if the length is more than 10 digit
-						usernameTxt.setEditable(false);
-					}
-				} else {
-					//allow back space and delete for edit
-					if(evt.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE || evt.getExtendedKeyCode() == KeyEvent.VK_DELETE){
-						// than allow editable
-						
-						usernameTxt.setEditable(true);
-					} else {
+					}else {
 						usernameTxt.setEditable(false);
 					}
 				}
 			}
-		});
+		);
 		usernameTxt.setColumns(10);
 		usernameTxt.setBounds(243, 173, 220, 22);
 		frame.getContentPane().add(usernameTxt);
 		
-		passwordTxt = new JTextField();
-		passwordTxt.setColumns(10);
-		passwordTxt.setBounds(243, 229, 220, 22);
-		frame.getContentPane().add(passwordTxt);
-		
 		emailTxt = new JTextField();
 		emailTxt.setColumns(10);
-		emailTxt.setBounds(243, 283, 220, 22);
+		emailTxt.setBounds(243, 337, 220, 22);
 		frame.getContentPane().add(emailTxt);
 		
 		phoneTxt = new JTextField();
@@ -215,11 +237,11 @@ public class RegistrationForm {
 			}
 		});
 		phoneTxt.setColumns(10);
-		phoneTxt.setBounds(243, 340, 220, 22);
+		phoneTxt.setBounds(243, 386, 220, 22);
 		frame.getContentPane().add(phoneTxt);
 		
 		//REGISTRATION BUTTON
-		JButton btnRegisterForm = new JButton("REGISTER");
+		JButton btnRegisterForm = new JButton("SUBMIT");
 		btnRegisterForm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {			
 				Connection connection = null;
@@ -227,11 +249,11 @@ public class RegistrationForm {
 				String name = nameTxt.getText();
 				String surname = surnameTxt.getText();
 				String username = usernameTxt.getText();
-				String password = passwordTxt.getText();
+				String passwordOne = password.getText();
 				String email = emailTxt.getText();
 				String phone = phoneTxt.getText();
 				
-				if(name.isEmpty() || surname.isEmpty() || username.isEmpty() || password.isEmpty() || email.isEmpty() || phone.isEmpty()){
+				if(name.isEmpty() || surname.isEmpty() || username.isEmpty() || passwordOne.isEmpty() || email.isEmpty() || phone.isEmpty()){
 					JOptionPane.showMessageDialog(null, "Fields cannot be empty");
 				} else {
 					
@@ -243,7 +265,7 @@ public class RegistrationForm {
 						statement.setString(1, nameTxt.getText());
 						statement.setString(2, surnameTxt.getText());
 						statement.setString(3, usernameTxt.getText());
-						statement.setString(4, passwordTxt.getText());
+						statement.setString(4, password.getText());
 						statement.setString(5, emailTxt.getText());
 						statement.setString(6, phoneTxt.getText());
 						
@@ -254,16 +276,77 @@ public class RegistrationForm {
 						JOptionPane.showMessageDialog(null, e);
 					}
 					
-				}
+				}	
 				
 				
-							
+			}
+						
+			
+	
+		});
+		
+		
+		
+	
+		btnRegisterForm.setFont(new Font("Georgia", Font.BOLD, 15));
+		btnRegisterForm.setBounds(12, 447, 147, 25);
+		frame.getContentPane().add(btnRegisterForm);
+		
+		JLabel lblConfirmPassword = new JLabel("Confirm password");
+		lblConfirmPassword.setFont(new Font("Georgia", Font.BOLD, 16));
+		lblConfirmPassword.setBounds(12, 287, 151, 20);
+		frame.getContentPane().add(lblConfirmPassword);
+		
+		
+		password = new JPasswordField();
+		password.addKeyListener(new KeyAdapter() {			
+		});
+		
+		
+		password.setEchoChar('*');
+		password.setBounds(243, 233, 220, 22);
+		frame.getContentPane().add(password);
+		
+		confirmPassword = new JPasswordField();	
+		confirmPassword.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent arg0) {
+				String firstPassword = password.getText();
+				String secondPassword = confirmPassword.getText();
+				
+				if(!firstPassword.equals(secondPassword)){
+					JOptionPane.showMessageDialog(null, "Password doesn't match, please check again");
+				}			
+				
 			}
 		});
-		btnRegisterForm.setFont(new Font("Georgia", Font.BOLD, 15));
-		btnRegisterForm.setBounds(316, 411, 147, 25);
-		frame.getContentPane().add(btnRegisterForm);
+		confirmPassword.setBounds(243, 285, 220, 22);
+		frame.getContentPane().add(confirmPassword);
+		//CLEAR BUTTON, CLEARS ALL TEXT FIELDS
+		JButton btnClear = new JButton("CLEAR");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				nameTxt.setText("");
+				surnameTxt.setText("");
+				usernameTxt.setText("");
+				password.setText("");
+				emailTxt.setText("");
+				phoneTxt.setText("");
+			}
+		});
+		btnClear.setFont(new Font("Georgia", Font.BOLD, 15));
+		btnClear.setBounds(244, 447, 147, 25);
+		frame.getContentPane().add(btnClear);
+		
+		
+		JButton btnClose = new JButton("CLOSE");
+		btnClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();//Closes window
+			}
+		});
+		btnClose.setFont(new Font("Georgia", Font.BOLD, 15));
+		btnClose.setBounds(478, 447, 147, 25);
+		frame.getContentPane().add(btnClose);
 		frame.setUndecorated(true);
 	}
-
 }
