@@ -55,7 +55,7 @@ public class LoginForm extends JFrame {
 	 */
 	public LoginForm() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(400, 500, 650, 500);
+		setBounds(500, 500, 650, 500);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(72, 209, 204));
 		contentPane.setBorder(new LineBorder(Color.BLACK));
@@ -64,25 +64,25 @@ public class LoginForm extends JFrame {
 		
 		JLabel lblEmail = new JLabel("Email");
 		lblEmail.setFont(new Font("Georgia", Font.BOLD, 17));
-		lblEmail.setBounds(47, 130, 129, 16);
+		lblEmail.setBounds(47, 188, 129, 16);
 		contentPane.add(lblEmail);
 		
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setFont(new Font("Georgia", Font.BOLD, 17));
-		lblPassword.setBounds(47, 203, 129, 16);
+		lblPassword.setBounds(47, 281, 129, 16);
 		contentPane.add(lblPassword);
 		
 		emailTxt = new JTextField();
-		emailTxt.setBounds(239, 124, 255, 22);
+		emailTxt.setBounds(239, 182, 255, 22);
 		contentPane.add(emailTxt);
 		emailTxt.setColumns(10);
 		
 		passwordTxt = new JTextField();
 		passwordTxt.setColumns(10);
-		passwordTxt.setBounds(239, 197, 255, 22);
+		passwordTxt.setBounds(239, 275, 255, 22);
 		contentPane.add(passwordTxt);
 		
-		JButton btnLogin = new JButton("LOGIN");
+		JButton btnLogin = new JButton("LOGIN ");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Connection connection = null;
@@ -94,21 +94,17 @@ public class LoginForm extends JFrame {
 				try {
 					
 					connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");
-					String sql = "SELECT email, password * FROM user WHERE email = "+ email + "and password= " + password;
+					String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
 					PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
-					statement.setInt(1, Integer.parseInt(emailTxt.getText().toString()));
-					statement.setInt(1, Integer.parseInt(passwordTxt.getText().toString()));
-//					statement.setString(0, password);
-//					statement.setString(1, email);					
+					statement.setString(1, emailTxt.getText());
+					statement.setString(2, passwordTxt.getText());					
 					ResultSet rs = statement.executeQuery();
 					if(rs.next()){
 						dispose();
 						JOptionPane.showMessageDialog(null, "Login successful!");
 					} else {
-						JOptionPane.showMessageDialog(null, "Incorrect email and password");
-					}
-					//statement.execute();		
-					
+						JOptionPane.showMessageDialog(null, "Please check your details again");
+					}				
 					connection.close();
 					
 				} catch (Exception e) {
@@ -117,7 +113,7 @@ public class LoginForm extends JFrame {
 			}
 		});
 		btnLogin.setFont(new Font("Georgia", Font.BOLD, 15));
-		btnLogin.setBounds(457, 321, 119, 25);
+		btnLogin.setBounds(447, 385, 148, 25);
 		contentPane.add(btnLogin);
 		
 		JButton btnRegister = new JButton("REGISTER");
@@ -129,20 +125,20 @@ public class LoginForm extends JFrame {
 			}
 		});
 		btnRegister.setFont(new Font("Georgia", Font.BOLD, 15));
-		btnRegister.setBounds(49, 321, 138, 25);
+		btnRegister.setBounds(47, 385, 138, 25);
 		contentPane.add(btnRegister);
 		
 		JLabel lblForgotPasswordClick = new JLabel("Forgot password? Click here.");
 		lblForgotPasswordClick.addMouseListener(new MouseAdapter() {
 		});
 		lblForgotPasswordClick.setFont(new Font("Georgia", Font.BOLD, 14));
-		lblForgotPasswordClick.setBounds(403, 242, 223, 16);
+		lblForgotPasswordClick.setBounds(415, 319, 223, 16);
 		contentPane.add(lblForgotPasswordClick);
 		
 		JLabel lblTheStemLibrary = new JLabel("THE STEM LIBRARY");
 		lblTheStemLibrary.setForeground(new Color(255, 255, 255));
 		lblTheStemLibrary.setFont(new Font("Georgia", Font.BOLD | Font.ITALIC, 30));
-		lblTheStemLibrary.setBounds(152, 36, 342, 41);
+		lblTheStemLibrary.setBounds(158, 65, 342, 41);
 		contentPane.add(lblTheStemLibrary);
 		setUndecorated(true);
 	}
