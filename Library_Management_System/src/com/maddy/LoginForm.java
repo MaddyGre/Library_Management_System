@@ -87,7 +87,7 @@ public class LoginForm extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Connection connection = null;
 				RegistrationForm rg = new RegistrationForm();
-				AdminUI admin = new AdminUI();
+				Admin admin = new Admin();
 				String email = rg.getEmailTxt().toString();
 				String password = rg.getPassword().toString();
 				

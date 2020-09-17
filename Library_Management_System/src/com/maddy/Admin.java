@@ -1,5 +1,6 @@
 package com.maddy;
 
+import com.mysql.fabric.xmlrpc.base.Array;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 
@@ -20,6 +21,7 @@ import javax.swing.JButton;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -31,44 +33,31 @@ import javax.swing.table.DefaultTableModel;
 
 
 
+
+
+
+
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class AdminUI extends JFrame {
+public class Admin extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField title_TextField;
 	private JTextField author_TextField;	
 	private JScrollPane scrollPane;
-	private JComboBox<String> subject_ComboBox;
-	private JComboBox<String> publisher_ComboBox;
-	private JComboBox<String> language_ComboBox;
 	DefaultTableModel model;
 	private JTable table;
 	
-	Connection connection;
-	PreparedStatement statement;
-	
-//	public void Connect(){
-//		
-//		try {
-//			connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");
-//			
-//		} catch (SQLException e) {
-//	
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
-	public AdminUI() {
-		
-		
-		
+	public Admin() {
+			
 		setBackground(new Color(72, 209, 204));
 				
 		
@@ -81,7 +70,6 @@ public class AdminUI extends JFrame {
 		contentPane.setLayout(null);
 		
 		table = new JTable();
-		//scrollPane.setViewportView(table_1);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(440, 38, 716, 530);
 		contentPane.add(scrollPane);
@@ -94,54 +82,7 @@ public class AdminUI extends JFrame {
 		model.setColumnIdentifiers(column_headers);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
-		
-		//ADD BUTTON:  ADD DATA TO DATABASE BUTTON
-		JButton add_Button = new JButton("ADD");
-		add_Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				String aut = author_TextField.getText();
-				String tit = title_TextField.getText();
-				String sub = subject_ComboBox.getSelectedItem().toString();
-				String pub = publisher_ComboBox.getSelectedItem().toString();
-				String lang = language_ComboBox.getSelectedItem().toString();
 				
-				try {
-					connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");
-					String sql = "INSERT INTO book (author, title, subject, publisher, language) VALUES (?, ?, ?, ?, ?)";
-					PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
-					statement.setString(1, aut);
-					statement.setString(2, tit);
-					statement.setString(3, sub);
-					statement.setString(4, pub);
-					statement.setString(5, lang);
-					
-					int a = statement.executeUpdate();
-					int t = statement.executeUpdate();
-					int s = statement.executeUpdate();
-					int p = statement.executeUpdate();
-					int l = statement.executeUpdate();
-					
-					
-					if((a == 1) && (t == 2) && (s == 3) && (p == 4) && (l == 5)){
-						JOptionPane.showMessageDialog(null, "The book has been added successfully");
-					} else {
-						JOptionPane.showMessageDialog(null, "Error: please try again");
-					}
-					
-					connection.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-
-			}
-		});
-		add_Button.setBounds(470, 605, 149, 25);
-		add_Button.setFont(new Font("Georgia", Font.BOLD, 20));
-		contentPane.add(add_Button);
-		
 		JButton search_Button = new JButton("SEARCH");
 		search_Button.setBounds(12, 605, 149, 25);
 		search_Button.setFont(new Font("Georgia", Font.BOLD, 20));
@@ -183,35 +124,29 @@ public class AdminUI extends JFrame {
 		contentPane.add(lblAuthorName);
 		
 		//SUBJECT COMBOBOX
-		final JComboBox subject_ComboBox = new JComboBox();
+		String[] listOfSubjects = {"", "Science", "Technology", "Engineering", "Mathematics"};
+		final JComboBox<String> subject_ComboBox = new JComboBox();	
+		DefaultComboBoxModel<String> subject_model = new DefaultComboBoxModel<>(listOfSubjects);
+		subject_ComboBox.setModel(subject_model);
 		subject_ComboBox.setBounds(158, 251, 251, 22);
 		contentPane.add(subject_ComboBox);
 		
-		subject_ComboBox.addItem("");
-		subject_ComboBox.addItem("Science");
-		subject_ComboBox.addItem("Technology");
-		subject_ComboBox.addItem("Engineering");
-		subject_ComboBox.addItem("Mathematics");
-		
-		final JComboBox publisher_ComboBox = new JComboBox();
+		//PUBLISHER COMBOBOX
+		String[] listOfPublishers = {"", "Pearson", "Oxford Press University", "World of Books", "Bloomsbury", "Hutchinson"};
+		final JComboBox<String> publisher_ComboBox = new JComboBox();
+		DefaultComboBoxModel<String> publisher_model = new DefaultComboBoxModel<>(listOfPublishers);
+		publisher_ComboBox.setModel(publisher_model);
 		publisher_ComboBox.setBounds(163, 377, 246, 22);
 		contentPane.add(publisher_ComboBox);
 		
-		publisher_ComboBox.addItem("");
-		publisher_ComboBox.addItem("Pearson");
-		publisher_ComboBox.addItem("Oxford Press University");
-		publisher_ComboBox.addItem("World of Books");
-		publisher_ComboBox.addItem("Bloomsbury");
-		publisher_ComboBox.addItem("Hutchinson");
-		
-		final JComboBox language_ComboBox = new JComboBox();
+		//LANGUAGE COMBOBOX
+		String[] listOfLanguages = {"", "German", "English", "French"};
+		final JComboBox<String> language_ComboBox = new JComboBox();
+		DefaultComboBoxModel<String> language_model = new DefaultComboBoxModel<>(listOfLanguages);
+		language_ComboBox.setModel(language_model);
 		language_ComboBox.setBounds(163, 499, 246, 22);
 		contentPane.add(language_ComboBox);
 		
-		language_ComboBox.addItem("");
-		language_ComboBox.addItem("German");
-		language_ComboBox.addItem("English");
-		language_ComboBox.addItem("French");
 		
 		title_TextField = new JTextField();
 		title_TextField.setBounds(161, 133, 248, 22);
@@ -237,6 +172,40 @@ public class AdminUI extends JFrame {
 		contentPane.add(author_TextField);
 		author_TextField.setColumns(10);
 		
+		//ADD BUTTON:  ADD DATA TO DATABASE BUTTON
+				JButton add_Button = new JButton("ADD");
+				add_Button.addActionListener(new ActionListener() {			
+					public void actionPerformed(ActionEvent event) {
+						Connection connection = null;			
+						String aut = author_TextField.getText();
+						String tit = title_TextField.getText();
+						String sub = subject_ComboBox.getSelectedItem().toString();
+						String pub = publisher_ComboBox.getSelectedItem().toString();
+						String lang = language_ComboBox.getSelectedItem().toString();
+						
+						try {
+							connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");
+							String sql = "INSERT INTO book (author, title, subject, publisher, language) VALUES (?, ?, ?, ?, ?)";
+							PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
+							statement.setString(1, aut);
+							statement.setString(2, tit);				
+							statement.setString(3, sub);
+							statement.setString(4, pub);
+							statement.setString(5, lang);
+							
+							statement.executeUpdate();
+							JOptionPane.showMessageDialog(null, "The book has been added successfully");		
+							connection.close();
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(null, e);
+						}
+						
+					}
+				});
+				add_Button.setBounds(470, 605, 149, 25);
+				add_Button.setFont(new Font("Georgia", Font.BOLD, 20));
+				contentPane.add(add_Button);
+				
 		// CLEAR BUTTON
 		JButton clear_Button = new JButton("CLEAR");
 		clear_Button.setBounds(249, 605, 117, 25);
@@ -251,24 +220,15 @@ public class AdminUI extends JFrame {
 		});
 		clear_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 		contentPane.add(clear_Button);
-		
-		
-		
-
-		
-		
-		
+			
 	}
-	
-	
-	
 	
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AdminUI frame = new AdminUI();
+					Admin frame = new Admin();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
