@@ -87,12 +87,13 @@ public class LoginForm extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				Connection connection = null;
 				RegistrationForm rg = new RegistrationForm();
+				AdminUI admin = new AdminUI();
 				String email = rg.getEmailTxt().toString();
 				String password = rg.getPassword().toString();
 				
 				
 				try {
-					
+
 					connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");
 					String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
 					PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
@@ -102,20 +103,27 @@ public class LoginForm extends JFrame {
 					if(rs.next()){
 						dispose();
 						JOptionPane.showMessageDialog(null, "Login successful!");
+						admin.setVisible(true);
+						
+						
+						
 					} else {
 						JOptionPane.showMessageDialog(null, "Please check your details again");
 					}				
 					connection.close();
-					
+
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, e);
 				}
+				
+				
 			}
 		});
 		btnLogin.setFont(new Font("Georgia", Font.BOLD, 15));
 		btnLogin.setBounds(447, 385, 148, 25);
 		contentPane.add(btnLogin);
 		
+		//REGISTRATION BUTTON
 		JButton btnRegister = new JButton("REGISTER");
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
