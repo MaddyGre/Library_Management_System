@@ -65,6 +65,8 @@ public class Admin extends JFrame {
 		this.model = model;
 	}
 	
+	
+	
 
 	public void updateTable(){
 		
@@ -130,22 +132,38 @@ public class Admin extends JFrame {
 		contentPane.add(scrollPane);
 		
 		table_1 = new JTable();
+		table_1.setRowSelectionAllowed(true);
+		table_1.setCellSelectionEnabled(true);	
+		table_1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table_1.setFont(new Font("Dialog", Font.PLAIN, 15));
-		table_1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table_1.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		table_1.setBackground(new Color(220, 220, 220));
+		table_1.setBackground(new Color(245, 245, 245));
 		model = new DefaultTableModel();
 		Object[] column_headers = {"BookID", "Author", "Title", "Subject", "Publisher", "Language"};
 		model.setColumnIdentifiers(column_headers);
-		table_1.setModel(model);
+		table_1.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"BookID", "Author", "Title", "Subject", "Publisher", "Language"
+			}
+		));
 		scrollPane.setViewportView(table_1);
 				
 		JButton search_Button = new JButton("SEARCH");
 		search_Button.setBounds(12, 605, 149, 25);
 		search_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 		contentPane.add(search_Button);
-			
+		
+		//DELETE BUTTON
 		JButton delete_Button = new JButton("DELETE ");
+		delete_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int row = table_1.getSelectedRow();
+				System.out.println(row);
+				
+			}
+		});
 		delete_Button.setBounds(979, 605, 149, 25);
 		delete_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 		contentPane.add(delete_Button);
@@ -296,40 +314,38 @@ public class Admin extends JFrame {
 				update_Button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						Connection connection = null;	
+			
 						
-//						String aut = author_TextField.getText();
-//						String tit = title_TextField.getText();
-//						String sub = subject_ComboBox.getSelectedItem().toString();
-//						String pub = publisher_ComboBox.getSelectedItem().toString();
-//						String lang = language_ComboBox.getSelectedItem().toString();
-						
-						int selectIndex = table_1.getSelectedRow();
-						int id = Integer.parseInt(model.getValueAt(selectIndex, 0).toString());
-						
+						int colum;
+						int row = table_1.getSelectedRow();
+						String data = table_1.getValueAt(row, 2).toString();
+						System.out.println(data);
+																		
 						try {
-								
-								connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");	
-								connection.setAutoCommit(false);
-								String sql = "UPDATE book SET author = ?, title = ?, subject = ?, publisher = ?, language = ? WHERE bookID = ?";
-								PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
-								statement.setInt(6, id);							
-								statement.setString(1, author_TextField.getText());
-								statement.setString(2, title_TextField.getText());
-								statement.setString(3, subject_ComboBox.getSelectedItem().toString());
-								statement.setString(4, publisher_ComboBox.getSelectedItem().toString());
-								statement.setString(5, language_ComboBox.getSelectedItem().toString());
-								statement.executeUpdate();											
-								JOptionPane.showMessageDialog(null, "The book has been updated successfully");								
-								model.fireTableDataChanged();
-								connection.commit();
-								
-						
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}catch(Throwable e) 
-						{
-							e.printStackTrace();
-						}
+							
+							connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");	
+				            String sql = "UPDATE book SET author = ?, title = ?,subject = ?, publisher = ?, language = ? WHERE bookID = ?";
+				            PreparedStatement pst = connection.prepareStatement(sql);
+				            pst.setString(1, table_1.getValueAt(row, 1).toString());
+				            pst.setString(2, table_1.getValueAt(row, 2).toString());
+				            pst.setString(3, table_1.getValueAt(row, 3).toString());
+				            pst.setString(4, table_1.getValueAt(row, 4).toString());
+				            pst.setString(5, table_1.getValueAt(row, 5).toString());
+				            pst.setString(6, table_1.getValueAt(row, 0).toString());
+				            int a = pst.executeUpdate();
+				            if (a > 0) {
+				                System.out.println("Successfully update");
+				            } else {
+				                System.out.println("Faild to update");
+				            }
+							
+					
+					} catch (Exception e) {
+						e.printStackTrace();
+					}catch(Throwable e) 
+					{
+						e.printStackTrace();
+					}
 					}
 				});
 				update_Button.setBounds(721, 605, 149, 25);
@@ -353,9 +369,9 @@ public class Admin extends JFrame {
 			
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			public void run()  {
 				try {
 					Admin frame = new Admin();
 					frame.setVisible(true);
@@ -366,4 +382,7 @@ public class Admin extends JFrame {
 		});
 	}
 
+	public JTable getTable_1() {
+		return table_1;
+	}
 }
