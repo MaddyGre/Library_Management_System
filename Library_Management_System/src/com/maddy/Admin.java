@@ -52,7 +52,6 @@ public class Admin extends JFrame {
 	private JTextField author_TextField;	
 	private JScrollPane scrollPane;
 	DefaultTableModel model;
-	//private JTable table;
 	private JTable table_1;
 	
 		
@@ -65,10 +64,7 @@ public class Admin extends JFrame {
 		this.model = model;
 	}
 	
-	
-	
-
-	public void updateTable(){
+public void updateTable(){
 		
 		int c;
 		
@@ -123,8 +119,6 @@ public class Admin extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		//table = new JTable();
 		JScrollPane scrollPane = new JScrollPane();
 
 		
@@ -132,8 +126,8 @@ public class Admin extends JFrame {
 		contentPane.add(scrollPane);
 		
 		table_1 = new JTable();
-		table_1.setRowSelectionAllowed(true);
-		table_1.setCellSelectionEnabled(true);	
+		table_1.setColumnSelectionAllowed(false);
+	
 		table_1.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table_1.setFont(new Font("Dialog", Font.PLAIN, 15));
 		table_1.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -148,22 +142,30 @@ public class Admin extends JFrame {
 				"BookID", "Author", "Title", "Subject", "Publisher", "Language"
 			}
 		));
+		
 		scrollPane.setViewportView(table_1);
-				
-		JButton search_Button = new JButton("SEARCH");
-		search_Button.setBounds(12, 605, 149, 25);
-		search_Button.setFont(new Font("Georgia", Font.BOLD, 20));
-		contentPane.add(search_Button);
 		
 		//DELETE BUTTON
 		JButton delete_Button = new JButton("DELETE ");
 		delete_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int row = table_1.getSelectedRow();
-				System.out.println(row);
+				model = (DefaultTableModel) table_1.getModel();
 				
+				try {
+					
+					int selectedRowIndex = table_1.getSelectedRow();
+					model.removeRow(selectedRowIndex);
+					
+					JOptionPane.showMessageDialog(null, "Book deleted successfully");
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, e);
+				}
+
 			}
-		});
+
+
+		}
+				);
 		delete_Button.setBounds(979, 605, 149, 25);
 		delete_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 		contentPane.add(delete_Button);
@@ -305,7 +307,7 @@ public class Admin extends JFrame {
 						
 					}
 				});
-				add_Button.setBounds(470, 605, 149, 25);
+				add_Button.setBounds(351, 605, 149, 25);
 				add_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 				contentPane.add(add_Button);
 								
@@ -316,13 +318,13 @@ public class Admin extends JFrame {
 						Connection connection = null;	
 			
 						
-						int colum;
+						int column;
 						int row = table_1.getSelectedRow();
 						String data = table_1.getValueAt(row, 2).toString();
 						System.out.println(data);
 																		
 						try {
-							
+							Class.forName("com.mysql.jdbc.Driver");
 							connection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/librarydatabase", "root", "Connection");	
 				            String sql = "UPDATE book SET author = ?, title = ?,subject = ?, publisher = ?, language = ? WHERE bookID = ?";
 				            PreparedStatement pst = connection.prepareStatement(sql);
@@ -334,9 +336,9 @@ public class Admin extends JFrame {
 				            pst.setString(6, table_1.getValueAt(row, 0).toString());
 				            int a = pst.executeUpdate();
 				            if (a > 0) {
-				                System.out.println("Successfully update");
+				                JOptionPane.showMessageDialog(null, "Record updated successfully");
 				            } else {
-				                System.out.println("Faild to update");
+				            	JOptionPane.showMessageDialog(null, "Record failed to update");
 				            }
 							
 					
@@ -348,13 +350,13 @@ public class Admin extends JFrame {
 					}
 					}
 				});
-				update_Button.setBounds(721, 605, 149, 25);
+				update_Button.setBounds(648, 605, 149, 25);
 				update_Button.setFont(new Font("Georgia", Font.BOLD, 20));
 				contentPane.add(update_Button);
 				
 		// CLEAR BUTTON
 		JButton clear_Button = new JButton("CLEAR");
-		clear_Button.setBounds(249, 605, 117, 25);
+		clear_Button.setBounds(93, 605, 117, 25);
 		clear_Button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				author_TextField.setText("");

@@ -27,12 +27,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JPasswordField;
 
 public class LoginForm extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField emailTxt;
-	private JTextField passwordTxt;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -77,11 +78,6 @@ public class LoginForm extends JFrame {
 		contentPane.add(emailTxt);
 		emailTxt.setColumns(10);
 		
-		passwordTxt = new JTextField();
-		passwordTxt.setColumns(10);
-		passwordTxt.setBounds(239, 275, 255, 22);
-		contentPane.add(passwordTxt);
-		
 		JButton btnLogin = new JButton("LOGIN ");
 		btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -98,7 +94,7 @@ public class LoginForm extends JFrame {
 					String sql = "SELECT * FROM user WHERE email = ? AND password = ?";
 					PreparedStatement statement = (PreparedStatement) connection.prepareStatement(sql);
 					statement.setString(1, emailTxt.getText());
-					statement.setString(2, passwordTxt.getText());					
+					statement.setString(2, passwordField.getText());					
 					ResultSet rs = statement.executeQuery();
 					if(rs.next()){
 						dispose();
@@ -148,6 +144,21 @@ public class LoginForm extends JFrame {
 		lblTheStemLibrary.setFont(new Font("Georgia", Font.BOLD | Font.ITALIC, 30));
 		lblTheStemLibrary.setBounds(158, 65, 342, 41);
 		contentPane.add(lblTheStemLibrary);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(239, 279, 255, 22);
+		contentPane.add(passwordField);
+		
+		JButton btnClose = new JButton("CLOSE");
+		btnClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				contentPane.setVisible(false);
+				
+			}
+		});
+		btnClose.setFont(new Font("Georgia", Font.BOLD, 15));
+		btnClose.setBounds(499, 445, 95, 25);
+		contentPane.add(btnClose);
 		setUndecorated(true);
 	}
 }
