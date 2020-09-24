@@ -1,5 +1,4 @@
-# Library_Management_System
-This repository contains the code for a library management system
+
 ## The STEM Library - Management System
 > The application consists of a library management system dedicated to STEM subjects only. The main Object of the application is the administrator. The system allows the administrator to log into the online library, provide his details for registration, and finally perform CRUD operations (adding, updating, deleting a new book to the online library). 
 ## MOTIVATION
