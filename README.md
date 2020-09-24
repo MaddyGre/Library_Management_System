@@ -13,6 +13,12 @@ This repository contains the code for a library management system
 https://docs.oracle.com/en/java/javase/11/install/installation-jdk-linux-platforms.html#GUID-737A84E4-2EFF-4D38-8E60-3E29D1B884B8
 - MySQL: https://dev.mysql.com/downloads/connector/j/
 - Eclipse IDE: https://www.eclipse.org/downloads/
+## TECH/FRAMEWORK USED
+ - Java
+ - JDBC
+ - SQL
+ - MySQL
+ - Eclipse IDE
 ## VISUALS
 
 ![image](https://user-images.githubusercontent.com/45042001/94151855-ca2e9a00-fe72-11ea-969f-2aa076b40e8f.png)
