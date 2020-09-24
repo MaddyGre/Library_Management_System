@@ -1,5 +1,5 @@
 
-## The STEM Library - Management System
+# The STEM Library - Management System
 > The application consists of a library management system dedicated to STEM subjects only. The main Object of the application is the administrator. The system allows the administrator to log into the online library, provide his details for registration, and finally perform CRUD operations (adding, updating, deleting a new book to the online library). 
 ## MOTIVATION
 > This project exists to demonstrate my commitment and passion to become a better programmer and problem-solver. I am passionate about reading and I also have a degree in a STEM subject (which is Computer science). I therefore created an online library because I wanted to do something that resembled some of my interests and combined that with my willingness to improve my coding skills. 
